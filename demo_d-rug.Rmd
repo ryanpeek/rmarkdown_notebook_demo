@@ -7,6 +7,7 @@ output:
     highlight: textmate
     theme: spacelab
     toc: yes
+bibliography: 'sample_bib.bib'
 ---
 
 ```{r setup, include=FALSE}
@@ -51,14 +52,25 @@ When inserting and running code chunks in `.Rmd` files, you can can add controls
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
 
+**Play with the Code chunk options**
+
 ```{r, echo=TRUE}
 
 plot(cars, pch=21, col="black", bg="maroon")
 
 ```
 
+```{r, eval=FALSE, echo=TRUE}
 
+plot(cars, pch=21, col="black", bg="maroon")
 
+```
+
+```{r, echo=TRUE, fig.align='center', fig.subcap="A lot of Speed vs. Distance", fig.cap="Yet Another Cars Plot", fig.width=7}
+
+plot(cars, pch=21, col="black", bg="salmon", cex=1.5)
+
+```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
@@ -75,7 +87,7 @@ If you are interested in a few other options, check out ([statebins](https://www
 Let's take a look!
 
 
-```{r hexstatebins, eval=F, echo=T}
+```{r hexstatebins, eval=F, echo=T, message=FALSE, error=FALSE}
 # Load packages
 library(rgdal)
 library(dplyr)
@@ -127,34 +139,81 @@ ggsave(filename = "./imgs/hexUS_Map.png", dpi = 200)
 ```
 ![hexMap](imgs/hexUS_Map.png)
 
-```{r get statehood year, echo=F, eval=F}
+## Add a Leaflet Map
 
-# statehood year
-library(readr)
-library(dplyr)
+You can also embed leaflet maps within your notebook, and they can be shared via html. This is a nice way to provide dynamic spatial data.
 
-statehood<-read_tsv(".././data/statehood.txt", col_names = F)
-statehood$yrs<-stringr::str_extract(statehood$X3, pattern = "\\d{4}")
+Let's look at where there are California snow course stations (check out the [CDEC website](http://cdec.water.ca.gov/snow/current/snow/index.html)). There's a nice package called "**`sharpshooter`**" we can use to pull the locations and metadata for all these stations and plot them with a `leaflet` map.
 
-# add col names
-colnames(statehood)<-c("id","State","Date","Notes","Year")
-statehood<-statehood[,c(2,5)]
-head(statehood)
+```{r leafletmap, fig.width=7}
 
-# get state data
-data(state) # load state data
-state.df<-as.data.frame(state.x77)
-state.df$state.abb<-state.abb
-state.df$State<-row.names(state.df)
-head(state.df)
-stateDF<-inner_join(statehood, state.df, by=c("State"))
-head(stateDF)
-save(stateDF, file = ".././data/state_DF.RData")
+library(sharpshootR)  # CDEC.snow.courses, CDECquery, CDECsnowQuery
+library(leaflet)
+
+# GET DATA AND PREP 
+
+data(CDEC.snow.courses)
+snw<-CDEC.snow.courses
+
+# make a few changes for plotting purposes
+snw$id<-as.factor(snw$id)
+snw$latitude<-as.numeric(snw$latitude)
+snw$longitude<-as.numeric(snw$longitude)*-1
+snw$apr1avg_in<-snw$april.1.Avg.inches
+snw<-dplyr::select(snw, course_number, id, elev_feet:longitude,apr1avg_in)
+str(snw) # check out data
+
+# add color palette
+pal <- colorNumeric(
+  palette = "GnBu",# can change to whatever: "RdBu", "GnBu"
+  domain = snw$apr1avg_in
+)
+
+
+# Make a leaflet map!
+m <- leaflet() %>% addTiles() %>% 
+  #setView(lng = -120.8, lat = 39, zoom = 8) %>%  # set to Auburn/Colfax, zoom 5 for CA 
+  addTiles(group = "OSM") %>%
+  addProviderTiles("Esri.WorldImagery", group = "ESRI Aerial") %>%
+  addProviderTiles("Thunderforest.Landscape", group = "Topo") %>%
+
+# proposed sites
+addCircleMarkers(data=snw, group="CDEC Snow",
+                 lng= ~longitude, lat= ~latitude,
+                 popup=paste0("<strong>","Course ID: ","</strong>", 
+                              snw$course_number, "<br><strong>", "Name: ",
+                              "</strong>", snw$id, "<br><strong>", "Elev (ft): ",
+                              "</strong>", snw$elev_feet, "<br><strong>", 
+                              "Apr-1 Avg: ", "</strong>", snw$apr1avg_in),
+                 stroke=TRUE, weight=0.6,radius=8,
+                 fillOpacity = 0.5, color="black",
+                 #fillColor= ~ifelse(snw$elev_feet>=7500, "skyblue", "yellow")) %>%
+                 fillColor= ~pal(apr1avg_in)) %>%
+
+  # add controls for basemaps and data
+  addLayersControl(
+    baseGroups = c("OSM", "ESRI Aerial", "Topo"),
+    overlayGroups = c("CDEC Snow"),
+    options = layersControlOptions(collapsed = T))
+
+print(m)
 
 ```
 
 
 
+## Writing Manuscripts
+
+This gets a little more interesting. You can fairly easily add citations by including a bibliography (.bib) file into the `yaml` header. Track changes similar to what is used in Word type documents is not as easy, though the advent of github has made it very easy to see what *diffs* exist, and I know some folks have had pretty successful piplelines using Rmd and github.
+
+A nice post about this process over at Steven Miller's [blog](http://svmiller.com/blog/2016/02/svm-r-markdown-manuscript/). Same place that I've pulled my markdown CV template from.
 
 
+## Using a Bibliography
+
+This is one of the key tricks, which for folks coming from EndNote, it does involve a bit of an extra step or two. I'll talk a bit about that briefly. To include citations, you can simply add a *".bib"* file, and then in the text you use this format to call the citations based on a shortID or code `[@Session2016, @Ababneh2010]`.
+
+For example, if you wanted to say, you read this stuff [@Acreman2004 or @Ababneh2010], and also these papers [@Ackerman2013; @Acs1993], it would then pop up at the end of your document. (below this section)
+
+## Required Readings
 
