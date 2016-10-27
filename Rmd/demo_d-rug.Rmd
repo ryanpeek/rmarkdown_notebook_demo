@@ -212,7 +212,7 @@ This gets a little more interesting. You can fairly easily add citations by incl
 
 A nice post about this process over at Steven Miller's [blog](http://svmiller.com/blog/2016/02/svm-r-markdown-manuscript/). Same place that I've pulled my [markdown CV](https://github.com/ryanpeek/markdown_cv) template from.
 
-### UPDATE: 
+#### UPDATE: 
 
 Also someone just pointed out a great resource for this sort of thing, check it out, it has templates, and a really nice pipeline for writing.
 
@@ -224,6 +224,8 @@ Also someone just pointed out a great resource for this sort of thing, check it 
 This is one of the key tricks, which for folks coming from EndNote, it does involve a bit of an extra step or two. I'll talk a bit about that briefly. To include citations, you can simply add a *".bib"* file, and then in the text you use this format to call the citations based on a shortID or code `[@Session2016, @Ababneh2010]`.
 
 For example, if you wanted to say, you read this stuff [@Acreman2004 or @Ababneh2010], and also these papers [@Ackerman2013; @Acs1993], it would then pop up at the end of your document. (below this section)
+
+A couple notes on software, [**Zotero**](https://www.zotero.org/) is free and works well. It will sync/update a bib file that you can pull from consistently. In addition, a software called [**JabRef**](http://www.jabref.org/) is a nice bibfile manager, and provides a nice option to convert EndNote libraries to .bib libraries by adding that Keyword (AuthorYEAR) to each citation. 
 
 ## Required Readings
 
