@@ -14,7 +14,7 @@ output:
 
 This notebook demonstrates many R Notebook features. Ignore this first chunk for now; we'll come back to it.
 
-```{r setup}
+```{r setup, cac}
 library(ggplot2)
 library(dygraphs)
 library(leaflet)

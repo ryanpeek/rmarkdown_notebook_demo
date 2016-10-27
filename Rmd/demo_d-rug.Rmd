@@ -2,33 +2,35 @@
 title: "RMarkdown and RNotebooks: Davis R-UG"
 date: '`r format(Sys.time(), "%Y-%b")`'
 output:
-  html_notebook: default
+  html_notebook: 
+    fig_caption: yes
   html_document:
     highlight: textmate
     theme: spacelab
     toc: yes
-bibliography: 'sample_bib.bib'
+bibliography: '../data/sample_bib.bib'
 ---
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE)
 
-## This line is amazing and I will tell you why...
-#knitr::opts_knit$set(root.dir = normalizePath("..")) 
+## This line is amazing and I will tell you why...it helps when knitting externally so you can still interactively run code with root paths...however only seems to work when knitting to PDF, doesn't work within RNotebook framework
+
+# knitr::opts_knit$set(root.dir = normalizePath("../")) 
 
 ```
 
 # RMarkdown
 
-Rather than go through every detail of RMarkdown and it's wonderfully simple but extensive functionality, I'd rather **<blue>bewilder</blue>** you with a bunch of examples, give you some examples you can play with, and include a lot of links you can check out on your own time. 
+Rather than go through every detail of RMarkdown and it's wonderfully simple but extensive functionality, I'd rather **bewilder** you with a bunch of examples, give you some examples you can play with, and include a lot of links you can check out on your own time. 
 
-![bewilder](imgs/woodybewildered.gif)
+![bewilder](../imgs/woodybewildered.gif)
 
 # What is an RNotebook?
 
 The main difference between an RMarkdown file (*`.Rmd`*) and a RNotebook file is the output. Notice in the `yaml` header there is a new output option? You can string these options together to output as multiple types. The main thing you'll see is a new file next to the `.Rmd` file, with a **`.nb.html`** extension. There are a few important things to know about **`.nb.html`** files.
 
-![yaml](imgs/yaml_example.png)
+![figure](../imgs/yaml_example.png)
 
 ## Using **`.nb.html`** Files
 
@@ -54,13 +56,13 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 
 **Play with the Code chunk options**
 
-```{r, echo=TRUE}
+```{r cars plot again again again, echo=TRUE}
 
 plot(cars, pch=21, col="black", bg="maroon")
 
 ```
 
-```{r, eval=FALSE, echo=TRUE}
+```{r, eval=TRUE, echo=FALSE}
 
 plot(cars, pch=21, col="black", bg="maroon")
 
@@ -97,10 +99,10 @@ library(rgeos)
 library(sp)
 library(viridis)
 
-load(file = ".././data/state_DF.RData")
+load(file = "../data/state_DF.RData")
 
-ogrInfo("us_states_hexgrid.geojson", "OGRGeoJSON")
-us <- readOGR("us_states_hexgrid.geojson", "OGRGeoJSON")
+ogrInfo("../data/us_states_hexgrid.geojson", "OGRGeoJSON")
+us <- readOGR("../data/us_states_hexgrid.geojson", "OGRGeoJSON")
 
 # add XY for centroid to use for labels
 centers <- cbind.data.frame(data.frame(gCentroid(us, byid=TRUE), id=us@data$iso3166_2))
@@ -134,10 +136,12 @@ gg
 
 
 # save it!
-ggsave(filename = "./imgs/hexUS_Map.png", dpi = 200)
+#ggsave(filename = "./imgs/hexUS_Map.png", dpi = 200)
 
 ```
-![hexMap](imgs/hexUS_Map.png)
+I'm including the raw path to an image here but it's not evaluating:
+
+`![hexMap_brokenpath](../imgs/hexUS_Map.png)`
 
 ## Add a Leaflet Map
 
@@ -206,7 +210,13 @@ print(m)
 
 This gets a little more interesting. You can fairly easily add citations by including a bibliography (.bib) file into the `yaml` header. Track changes similar to what is used in Word type documents is not as easy, though the advent of github has made it very easy to see what *diffs* exist, and I know some folks have had pretty successful piplelines using Rmd and github.
 
-A nice post about this process over at Steven Miller's [blog](http://svmiller.com/blog/2016/02/svm-r-markdown-manuscript/). Same place that I've pulled my markdown CV template from.
+A nice post about this process over at Steven Miller's [blog](http://svmiller.com/blog/2016/02/svm-r-markdown-manuscript/). Same place that I've pulled my [markdown CV](https://github.com/ryanpeek/markdown_cv) template from.
+
+### UPDATE: 
+
+Also someone just pointed out a great resource for this sort of thing, check it out, it has templates, and a really nice pipeline for writing.
+
+ > http://plain-text.co
 
 
 ## Using a Bibliography
