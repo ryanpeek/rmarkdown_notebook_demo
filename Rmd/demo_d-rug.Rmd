@@ -1,22 +1,24 @@
 ---
-title: "RMarkdown and RNotebooks: Davis R-UG"
+title: 'RMarkdown and RNotebooks: Davis R-UG'
 date: '`r format(Sys.time(), "%Y-%b")`'
 output:
-  html_notebook: 
+  html_notebook:
     fig_caption: yes
   html_document:
     highlight: textmate
     theme: spacelab
     toc: yes
-bibliography: '../data/sample_bib.bib'
+bibliography: ../data/sample_bib.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-## This line is amazing and I will tell you why...it helps when knitting externally so you can still interactively run code with root paths...however only seems to work when knitting to PDF, doesn't work within RNotebook framework
+## This line is amazing and I will tell you why...it helps when knitting externally so you can still interactively run code with root paths!
 
-# knitr::opts_knit$set(root.dir = normalizePath("../")) 
+knitr::opts_knit$set(root.dir = normalizePath("../")) 
+
+## NOTE: This only works for paths INSIDE of code chunks
 
 ```
 
@@ -24,7 +26,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Rather than go through every detail of RMarkdown and it's wonderfully simple but extensive functionality, I'd rather **bewilder** you with a bunch of examples, give you some examples you can play with, and include a lot of links you can check out on your own time. 
 
-![bewilder](../imgs/woodybewildered.gif)
+![Bewildered yet?](../imgs/woodybewildered.gif) 
+
+<!--Notice this path still requires the *../* because it is outside of a code chunk-->
+<!--Also notice this is a trick to add notes in the RMarkdown that will not show up in the "*knitted*" version of-->
 
 # What is an RNotebook?
 
@@ -99,10 +104,10 @@ library(rgeos)
 library(sp)
 library(viridis)
 
-load(file = "../data/state_DF.RData")
+load(file = "data/state_DF.RData")
 
-ogrInfo("../data/us_states_hexgrid.geojson", "OGRGeoJSON")
-us <- readOGR("../data/us_states_hexgrid.geojson", "OGRGeoJSON")
+ogrInfo("data/us_states_hexgrid.geojson", "OGRGeoJSON")
+us <- readOGR("data/us_states_hexgrid.geojson", "OGRGeoJSON")
 
 # add XY for centroid to use for labels
 centers <- cbind.data.frame(data.frame(gCentroid(us, byid=TRUE), id=us@data$iso3166_2))
@@ -141,7 +146,7 @@ gg
 ```
 I'm including the raw path to an image here but it's not evaluating:
 
-`![hexMap_brokenpath](../imgs/hexUS_Map.png)`
+`![hexMap_brokenpath](imgs/hexUS_Map.png)`
 
 ## Add a Leaflet Map
 
